@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 
 namespace SakeFigureShop.Domains
 {
@@ -22,5 +23,23 @@ namespace SakeFigureShop.Domains
         public long? FilmId { get; set; }
         public Film? Film { get; set; }
         public ICollection<Media> Medias { get; set; }
+
+        public override bool Equals(Object obj)
+        {
+            //Check for null and compare run-time types.
+            if ((obj == null) || !this.GetType().Equals(obj.GetType()))
+            {
+                return false;
+            }
+            else
+            {
+                Product p = (Product) obj;
+                return (Name == p.Name) 
+                    && (Description == p.Description) 
+                    && (Price == p.Price) 
+                    && (BrandId == p.BrandId) 
+                    && (FilmId == p.FilmId);
+            }
+        }
     }
 }
