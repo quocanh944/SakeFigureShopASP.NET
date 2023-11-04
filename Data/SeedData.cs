@@ -261,7 +261,7 @@ namespace SakeFigureShop.Data
                 };
 
                 products.ForEach(product => {
-                    var p = context.Products.Where(p => product.Equals(p)).FirstOrDefault();
+                    var p = context.Products.Where(p => product.Name == p.Name).FirstOrDefault();
                     
                     if (p == null)
                     {

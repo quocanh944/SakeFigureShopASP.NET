@@ -1,0 +1,290 @@
+﻿@model SakeFigureShop.Models.Home.ShopAllViewModel;
+@{
+    ViewData["Title"] = "Mua sắm";
+}
+<section class="">
+    <div class="container">
+        <div class="row">
+            <!-- sidebar -->
+            <div class="col-lg-3">
+                <!-- Toggle button -->
+                <button class="btn btn-outline-secondary mb-3 w-100 d-lg-none"
+                        type="button"
+                        data-mdb-toggle="collapse"
+                        data-mdb-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent"
+                        aria-expanded="false"
+                        aria-label="Toggle navigation">
+                    <span>Hiện bộ lọc</span>
+                </button>
+                <!-- Collapsible wrapper -->
+                <div class="collapse card d-lg-block mb-5" id="navbarSupportedContent">
+                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingOne">
+                                <button class="accordion-button text-dark bg-light"
+                                        type="button"
+                                        data-mdb-toggle="collapse"
+                                        data-mdb-target="#panelsStayOpen-collapseOne"
+                                        aria-expanded="true"
+                                        aria-controls="panelsStayOpen-collapseOne">
+                                    Anime
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne">
+                                <div class="accordion-body">
+                                    <ul class="list-unstyled">
+                                        <li>
+                                            <a href="" class="text-primary">Tất cả phim</a>
+                                        </li>
+                                        @foreach (var film in Model.AllFilms)
+                                        {
+                                            <li>
+                                                <a href="/Film/@film.Id" class="text-dark">@film.Name </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingTwo">
+                                <button class="accordion-button text-dark bg-light"
+                                        type="button"
+                                        data-mdb-toggle="collapse"
+                                        data-mdb-target="#panelsStayOpen-collapseTwo"
+                                        aria-expanded="true"
+                                        aria-controls="panelsStayOpen-collapseTwo">
+                                    Hãng
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse show" aria-labelledby="headingTwo">
+                                <div class="accordion-body">
+                                    <div>
+                                        <!-- Checked checkbox -->
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" value="0" id="all" checked/>
+                                            <label class="form-check-label" for="all">Tất cả Hãng</label>
+                                            <span class="badge badge-secondary float-end">@ViewData["Product Quantity"]</span>
+                                        </div>
+                                        @foreach (var brand in Model.AllBrands)
+                                        {
+                                            <!-- Checked checkbox -->
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" value="@brand.Id" id="@brand.Id" />
+                                                <label class="form-check-label" for="@brand.Id">@brand.Name</label>
+                                                <span class="badge badge-secondary float-end">@brand.Products.Count()</span>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingThree">
+                                <button class="accordion-button text-dark bg-light"
+                                        type="button"
+                                        data-mdb-toggle="collapse"
+                                        data-mdb-target="#panelsStayOpen-collapseThree"
+                                        aria-expanded="false"
+                                        aria-controls="panelsStayOpen-collapseThree">
+                                    Giá
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseThree" class="accordion-collapse collapse show" aria-labelledby="headingThree">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <p class="mb-0">
+                                                Thấp nhất
+                                            </p>
+                                            <div class="form-outline">
+                                                @if ((long)ViewData["Min Price"] != -1)
+                                                {
+                                                    <input value="@ViewData["Min Price"]" type="number" id="minPrice" name="minPrice" class="form-control" />
+                                                } else
+                                                {
+                                                    <input type="number" id="minPrice" name="minPrice" class="form-control" />
+                                                }
+                                                <label class="form-label" for="minPrice">₫0</label>
+                                            </div>
+                                        </div>
+                                        <div class="col-12">
+                                            <p class="mb-0">
+                                                Cao nhất
+                                            </p>
+                                            <div class="form-outline">
+                                                @if ((long) ViewData["Max Price"] != -1)
+                                                {
+                                                    <input value="@ViewData["Max Price"]" type="number" id="maxPrice" name="maxPrice" class="form-control" />
+                                                }
+                                                else
+                                                {
+                                                    <input type="number" id="maxPrice" name="maxPrice" class="form-control" />
+                                                }
+                                                <label class="form-label" for="maxPrice">₫5,000,000</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="applyFilter" type="button" class="btn btn-white w-100 border border-secondary">Áp dụng</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- sidebar -->
+            <!-- content -->
+            <div class="col-lg-9">
+                <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
+                    <strong class="d-block py-2">@ViewData["Product Quantity"] Sản phẩm</strong>
+                    <div class="ms-auto">
+                        <select 
+                            class="form-select d-inline-block w-auto border pt-1"
+                            id="orderSelect"
+                        >
+                            @if (ViewData["Sort Type"].ToString() == "ASC")
+                            {
+                                <option value="ASC" selected>Giá tăng dần</option>
+                                <option value="DESC">Giá giảm dần</option>
+                            }
+                            else
+                            {
+                                <option value="ASC">Giá tăng dần</option>
+                                <option value="DESC" selected>Giá giảm dần</option>
+                            }
+                        </select>
+                    </div>
+                </header>
+
+                <div class="row">
+                    @foreach(var prod in Model.AllProducts)
+                    {
+                        <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
+                            <div class="card w-100 my-2 shadow-2-strong">
+                                <img src="@prod.ThumbnailImageUrl" class="card-img-top" />
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title">@prod.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</h5>
+                                    <p class="card-text">@prod.Name</p>
+                                    <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+                                        <a href="#!" class="btn btn-primary shadow-0 me-1">Thêm vào giỏ hàng</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <!-- Discount Card 
+                    <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
+                        <div class="card w-100 my-2 shadow-2-strong">
+                            <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/10.webp" class="card-img-top" />
+                            <div class="card-body d-flex flex-column">
+                                <div class="d-flex flex-row">
+                                    <h5 class="mb-1 me-1">$34,50</h5>
+                                    <span class="text-danger"><s>$49.99</s></span>
+                                </div>
+                                <p class="card-text">T-shirts with multiple colors, for men and lady</p>
+                                <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
+                                    <a href="#!" class="btn btn-primary shadow-0 me-1">Add to cart</a>
+                                    <a href="#!" class="btn btn-light border icon-hover px-2 pt-2"><i class="fas fa-heart fa-lg text-secondary px-1"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    -->
+                </div>
+
+                <hr />
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation example" class="d-flex justify-content-center mt-3">
+                    <ul class="pagination">
+                        @if ((int)ViewData["Current Page"] == 1)
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        } else
+                        {
+                            ViewData["Previous Page"] = (int)ViewData["Current Page"] - 1;
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1&@ViewData["Current Query"]" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@ViewData["Previous Page"]&@ViewData["Current Query"]" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                        }
+                        <li class="page-item active"><a class="page-link" href="#">@ViewData["Current Page"]</a></li>
+                        @if (ViewData["Current Page"] == ViewData["Number of Pages"])
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        } else
+                        {
+                            ViewData["Next Page"] = (int) ViewData["Current Page"] + 1;
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@ViewData["Next Page"]&@ViewData["Current Query"]" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page=@ViewData["Number of Pages"]&@ViewData["Current Query"]" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;&raquo;</span>
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+                <!-- Pagination -->
+            </div>
+        </div>
+    </div>
+</section>
+<!-- sidebar + content -->
+<script>
+    $(() => {
+        $("#orderSelect").change(e => {
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            
+            urlParams.set("sort", e.target.value)
+            urlParams.set("page", 1)
+
+            window.location.href = window.location.pathname + "?" + urlParams.toString();
+        })
+        $("#applyFilter").click(e => {
+            const minPrice = $("#minPrice").val()
+            const maxPrice = $("#maxPrice").val()
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            if (minPrice) {
+                urlParams.set("minPrice", minPrice)
+            }
+            if (maxPrice) {
+                urlParams.set("maxPrice", maxPrice)
+            }
+
+            urlParams.set("page", 1)
+
+            window.location.href = window.location.pathname + "?" + urlParams.toString();
+        })
+    })
+</script>
