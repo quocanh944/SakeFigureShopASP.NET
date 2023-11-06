@@ -30,6 +30,7 @@ namespace SakeFigureShop.Controllers
         }
 
         // GET: Brands
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return _context.Brands != null ?
@@ -38,6 +39,7 @@ namespace SakeFigureShop.Controllers
         }
 
         // GET: Brands/Details/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Details(long? id)
         {
             if (id == null || _context.Brands == null)
@@ -56,6 +58,7 @@ namespace SakeFigureShop.Controllers
         }
 
         // GET: Brands/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
@@ -66,7 +69,7 @@ namespace SakeFigureShop.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name")] Brand brand)
+        public async Task<IActionResult> Create([Bind("Name")] Brand brand)
         {
             if (ModelState.IsValid)
             {
@@ -78,6 +81,7 @@ namespace SakeFigureShop.Controllers
         }
 
         // GET: Brands/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null || _context.Brands == null)
@@ -96,6 +100,7 @@ namespace SakeFigureShop.Controllers
         // POST: Brands/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Brand brand)
@@ -129,6 +134,7 @@ namespace SakeFigureShop.Controllers
         }
 
         // GET: Brands/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null || _context.Brands == null)
@@ -147,6 +153,7 @@ namespace SakeFigureShop.Controllers
         }
 
         // POST: Brands/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)

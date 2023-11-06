@@ -1,6 +1,6 @@
 ﻿@model SakeFigureShop.Models.Home.ShopAllViewModel;
 @{
-    ViewData["Title"] = "Mua sắm";
+    ViewData["Title"] = "Anime";
 }
 <section class="">
     <div class="container">
@@ -35,12 +35,18 @@
                                 <div class="accordion-body">
                                     <ul class="list-unstyled">
                                         <li>
-                                            <a href="" class="text-primary">Tất cả phim</a>
+                                            <a href="/Home/ShopAll?@ViewData["Current Query"]" class="text-dark">Tất cả phim</a>
                                         </li>
                                         @foreach (var film in Model.AllFilms)
                                         {
                                             <li>
-                                                <a href="/Home/Film/@film.Id?@ViewData["Current Query"]" class="text-dark">@film.Name </a>
+                                                @if ((long) ViewData["Film Id"] == film.Id)
+                                                {
+                                                    <a href="/Home/Film/@film.Id?@ViewData["Current Query"]" class="text-primary">@film.Name </a>
+                                                } else
+                                                {
+                                                    <a href="/Home/Film/@film.Id?@ViewData["Current Query"]" class="text-dark">@film.Name </a>
+                                                }
                                             </li>
                                         }
                                     </ul>
@@ -68,8 +74,9 @@
                                         <div class="form-check">
                                             @if (brandsFiltered.Count > 0)
                                             {
-                                                <input class="form-check-input brand-select" type="checkbox" value="-1" id="all"/>
-                                            } else
+                                                <input class="form-check-input brand-select" type="checkbox" value="-1" id="all" />
+                                            }
+                                            else
                                             {
                                                 <input class="form-check-input brand-select" type="checkbox" value="-1" id="all" checked />
                                             }
@@ -83,12 +90,13 @@
                                                 @if (brandsFiltered.Contains(brand.Id))
                                                 {
                                                     <input class="form-check-input brand-select" type="checkbox" value="@brand.Id" id="@brand.Id" checked />
-                                                } else
+                                                }
+                                                else
                                                 {
                                                     <input class="form-check-input brand-select" type="checkbox" value="@brand.Id" id="@brand.Id" />
                                                 }
                                                 <label class="form-check-label" for="@brand.Id">@brand.Name</label>
-                                                <span class="badge badge-secondary float-end">@brand.Products.Count()</span>
+                                                <span class="badge badge-secondary float-end">@brand.Products.Where(p => p.FilmId == (long) ViewData["Film Id"]).Count()</span>
                                             </div>
                                         }
                                     </div>
@@ -117,7 +125,8 @@
                                                 @if ((long)ViewData["Min Price"] != -1)
                                                 {
                                                     <input value="@ViewData["Min Price"]" type="number" id="minPrice" name="minPrice" class="form-control" />
-                                                } else
+                                                }
+                                                else
                                                 {
                                                     <input type="number" id="minPrice" name="minPrice" class="form-control" />
                                                 }
@@ -129,7 +138,7 @@
                                                 Cao nhất
                                             </p>
                                             <div class="form-outline">
-                                                @if ((long) ViewData["Max Price"] != -1)
+                                                @if ((long)ViewData["Max Price"] != -1)
                                                 {
                                                     <input value="@ViewData["Max Price"]" type="number" id="maxPrice" name="maxPrice" class="form-control" />
                                                 }
@@ -154,10 +163,8 @@
                 <header class="d-sm-flex align-items-center border-bottom mb-4 pb-3">
                     <strong class="d-block py-2">@ViewData["Product Quantity"] Sản phẩm</strong>
                     <div class="ms-auto">
-                        <select 
-                            class="form-select d-inline-block w-auto border pt-1"
-                            id="orderSelect"
-                        >
+                        <select class="form-select d-inline-block w-auto border pt-1"
+                                id="orderSelect">
                             @if (ViewData["Sort Type"].ToString() == "ASC")
                             {
                                 <option value="ASC" selected>Giá tăng dần</option>
@@ -173,7 +180,7 @@
                 </header>
 
                 <div class="row">
-                    @foreach(var prod in Model.AllProducts)
+                    @foreach (var prod in Model.AllProducts)
                     {
                         <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
                             <div class="card w-100 my-2 shadow-2-strong">
@@ -191,7 +198,7 @@
                             </div>
                         </div>
                     }
-                    <!-- Discount Card 
+                    <!-- Discount Card
                     <div class="col-lg-4 col-md-6 col-sm-6 d-flex">
                         <div class="card w-100 my-2 shadow-2-strong">
                             <img src="https://bootstrap-ecommerce.com/bootstrap5-ecommerce/images/items/10.webp" class="card-img-top" />
@@ -228,7 +235,8 @@
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
-                        } else
+                        }
+                        else
                         {
                             ViewData["Previous Page"] = (int)ViewData["Current Page"] - 1;
                             <li class="page-item">
@@ -243,7 +251,7 @@
                             </li>
                         }
                         <li class="page-item active"><a class="page-link" href="#">@ViewData["Current Page"]</a></li>
-                        @if (ViewData["Current Page"].ToString() == ViewData["Number of Pages"].ToString())
+                        @if (ViewData["Current Page"] == ViewData["Number of Pages"])
                         {
                             <li class="page-item disabled">
                                 <a class="page-link" href="#" aria-label="Next">
@@ -255,9 +263,10 @@
                                     <span aria-hidden="true">&raquo;&raquo;</span>
                                 </a>
                             </li>
-                        } else
+                        }
+                        else
                         {
-                            ViewData["Next Page"] = (int) ViewData["Current Page"] + 1;
+                            ViewData["Next Page"] = (int)ViewData["Current Page"] + 1;
                             <li class="page-item">
                                 <a class="page-link" href="?page=@ViewData["Next Page"]&@ViewData["Current Query"]" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
@@ -280,7 +289,7 @@
 <script>
     $(() => {
 
-        
+
 
         $(".brand-select").change(e => {
             if (e.target.value != "-1") {
@@ -295,7 +304,7 @@
         $("#orderSelect").change(e => {
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
-            
+
             urlParams.set("sort", e.target.value)
             urlParams.set("page", 1)
 
@@ -308,7 +317,7 @@
             const urlParams = new URLSearchParams(queryString);
             let brands = "";
             console.log($(".brand-select").has("#all").length);
-            
+
             $(".brand-select").each((i, obj) => {
                 if (obj.checked && obj.value != -1) {
                     brands += "&brands=" + obj.value;

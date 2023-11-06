@@ -30,7 +30,61 @@ namespace SakeFigureShop.Controllers
         }
 
         [AllowAnonymous]
-        public IActionResult ShopAll(int page = 1, string sort = "ASC", long minPrice = -1, long maxPrice = -1)
+        [Route("Home/Film/{id}")]
+        public IActionResult Film(
+            long id,
+            [FromQuery] List<long> brands,
+            int page = 1,
+            string sort = "ASC",
+            long minPrice = -1,
+            long maxPrice = -1)
+        {
+            var vm = new ShopAllViewModel();
+            vm.AllBrands = _context.Brands.Include(brand => brand.Products).ToList();
+            vm.AllFilms = _context.Films.Include(film => film.Products).ToList();
+
+            var filteredProds =
+                sort == "ASC" ?
+                _context.Products.Include(p => p.Brand).Include(p => p.Film)
+                    .OrderBy(p => p.Price)
+                    .Where(p => p.FilmId == id)
+                    .Where(p => brands.Count > 0 ? (p.BrandId != null ? brands.Contains((long)p.BrandId) : false) : true)
+                    .Where(p => maxPrice != -1 ? p.Price <= maxPrice : true)
+                    .Where(p => minPrice != -1 ? p.Price >= minPrice : true) :
+                _context.Products.Include(p => p.Brand).Include(p => p.Film)
+                    .OrderByDescending(p => p.Price)
+                    .Where(p => p.FilmId == id)
+                    .Where(p => brands.Count > 0 ? (p.BrandId != null ? brands.Contains((long)p.BrandId) : false) : true)
+                    .Where(p => maxPrice != -1 ? p.Price <= maxPrice : true)
+                    .Where(p => minPrice != -1 ? p.Price >= minPrice : true);
+            ViewData["Number of Pages"] = Math.Ceiling(filteredProds.Count() / (pageSize * 1.0));
+            vm.AllProducts = filteredProds
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+            ViewData["Product Quantity"] = filteredProds.Count();
+            
+            ViewData["Min Price"] = minPrice;
+            ViewData["Max Price"] = maxPrice;
+            ViewData["Current Page"] = page;
+            ViewData["Sort Type"] = sort;
+            ViewData["Brands"] = brands;
+            ViewData["Film Id"] = id;
+            ViewData["Current Query"] = "sort=" + sort + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice;
+            foreach (var item in brands)
+            {
+                ViewData["Current Query"] += "&brands=" + item.ToString();
+            }
+            return View(vm);
+        }
+
+        [AllowAnonymous]
+        public IActionResult ShopAll(
+            [FromQuery] List<long> brands,
+            int page = 1,
+            string sort = "ASC",
+            long minPrice = -1,
+            long maxPrice = -1)
         {                                 
             var vm = new ShopAllViewModel();
             vm.AllBrands = _context.Brands.Include(brand => brand.Products).ToList();
@@ -38,12 +92,14 @@ namespace SakeFigureShop.Controllers
 
             var filteredProds = 
                 sort == "ASC" ? 
-                _context.Products
+                _context.Products.Include(p => p.Brand).Include(p => p.Film)
                     .OrderBy(p => p.Price)
+                    .Where(p => brands.Count > 0 ? (p.BrandId != null ? brands.Contains((long) p.BrandId) : false) : true)
                     .Where(p => maxPrice != -1 ? p.Price <= maxPrice : true)
                     .Where(p => minPrice != -1 ? p.Price >= minPrice : true) :
-                _context.Products
+                _context.Products.Include(p => p.Brand).Include(p => p.Film)
                     .OrderByDescending(p => p.Price)
+                    .Where(p => brands.Count > 0 ? (p.BrandId != null ? brands.Contains((long)p.BrandId) : false) : true)
                     .Where(p => maxPrice != -1 ? p.Price <= maxPrice : true)
                     .Where(p => minPrice != -1 ? p.Price >= minPrice : true);
 
@@ -58,7 +114,12 @@ namespace SakeFigureShop.Controllers
             ViewData["Max Price"] = maxPrice;
             ViewData["Current Page"] = page;
             ViewData["Sort Type"] = sort;
+            ViewData["Brands"] = brands;
             ViewData["Current Query"] = "sort=" + sort + "&minPrice=" + minPrice + "&maxPrice=" + maxPrice;
+            foreach (var item in brands)
+            {
+                ViewData["Current Query"] += "&brands=" + item.ToString();
+            }
             return View(vm);
         }
 
