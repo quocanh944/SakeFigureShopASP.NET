@@ -4,7 +4,7 @@
 @{
     ViewData["Title"] = "Đăng nhập";
 }
-<form id="account" method="post">
+<form id="account" method="post" style="max-width: 600px; margin: auto">
     <h2>Đăng nhập</h2>
     <hr />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -31,7 +31,7 @@
     <div>
         <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng nhập</button>
     </div>
-    <div class="mt-4">
+    <div class="mt-4 d-flex justify-content-between">
         <p>
             <a id="forgot-password" asp-page="./ForgotPassword">Quên mật khẩu?</a>
         </p>

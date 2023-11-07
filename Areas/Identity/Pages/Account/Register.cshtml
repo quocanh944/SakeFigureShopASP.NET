@@ -23,6 +23,11 @@
         <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
     </div>
     <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng ký</button>
+    <div class="mt-4 d-flex justify-content-center">
+        <p>
+            <a asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Đã có tài khoản? Đăng nhập!</a>
+        </p>
+    </div>
 </form>
 
 @section Scripts {

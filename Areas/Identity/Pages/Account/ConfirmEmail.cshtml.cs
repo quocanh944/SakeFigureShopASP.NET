@@ -15,6 +15,7 @@ using SakeFigureShop.Domains;
 
 namespace SakeFigureShop.Areas.Identity.Pages.Account
 {
+    [AllowAnonymous]
     public class ConfirmEmailModel : PageModel
     {
         private readonly UserManager<User> _userManager;

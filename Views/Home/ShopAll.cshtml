@@ -63,6 +63,7 @@
                                     <div>
                                         @{
                                             var brandsFiltered = ViewData["Brands"] as List<long>;
+                                            var allProduct = Model.AllBrands.ToList().ConvertAll(b => b.Products.Count()).Sum();
                                         }
                                         <!-- Checked checkbox -->
                                         <div class="form-check">
@@ -74,7 +75,7 @@
                                                 <input class="form-check-input brand-select" type="checkbox" value="-1" id="all" checked />
                                             }
                                             <label class="form-check-label" for="all">Tất cả Hãng</label>
-                                            <span class="badge badge-secondary float-end">@ViewData["Product Quantity"]</span>
+                                            <span class="badge badge-secondary float-end">@allProduct</span>
                                         </div>
                                         @foreach (var brand in Model.AllBrands)
                                         {
@@ -91,6 +92,27 @@
                                                 <span class="badge badge-secondary float-end">@brand.Products.Count()</span>
                                             </div>
                                         }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion-item">
+                            <h2 class="accordion-header" id="headingFourth">
+                                <button class="accordion-button text-dark bg-light"
+                                        type="button"
+                                        data-mdb-toggle="collapse"
+                                        data-mdb-target="#panelsStayOpen-collapseFourth"
+                                        aria-expanded="false"
+                                        aria-controls="panelsStayOpen-collapseFourth">
+                                    Tìm kiếm
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-collapseFourth" class="accordion-collapse collapse show" aria-labelledby="headingFourth">
+                                <div class="accordion-body">
+                                    <div class="row mb-3">
+                                        <div class="col-12">
+                                            <input type="search" id="searchInput" class="form-control" placeholder="Tên sản phẩm" aria-label="Search">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -145,6 +167,8 @@
                                 </div>
                             </div>
                         </div>
+                        
+                        
                     </div>
                 </div>
             </div>
@@ -280,8 +304,6 @@
 <script>
     $(() => {
 
-        
-
         $(".brand-select").change(e => {
             if (e.target.value != "-1") {
                 $("#all").prop("checked", false)
@@ -304,10 +326,10 @@
         $("#applyFilter").click(e => {
             const minPrice = $("#minPrice").val()
             const maxPrice = $("#maxPrice").val()
+            const searchInput = $("#searchInput").val()
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
             let brands = "";
-            console.log($(".brand-select").has("#all").length);
             
             $(".brand-select").each((i, obj) => {
                 if (obj.checked && obj.value != -1) {
@@ -320,8 +342,13 @@
             if (maxPrice) {
                 urlParams.set("maxPrice", maxPrice)
             }
+            if (searchInput) {
+                urlParams.set("search", searchInput)
+            }
+            
 
             urlParams.set("page", 1)
+            urlParams.delete("brands")
             window.location.href = window.location.pathname + "?" + urlParams.toString() + brands;
         })
     })

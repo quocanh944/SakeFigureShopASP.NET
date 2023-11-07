@@ -244,7 +244,7 @@ namespace SakeFigureShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("SakeFigureShop.Domains.CartItem", b =>
@@ -271,7 +271,7 @@ namespace SakeFigureShop.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("SakeFigureShop.Domains.Film", b =>
@@ -288,7 +288,7 @@ namespace SakeFigureShop.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Films");
+                    b.ToTable("Films", (string)null);
                 });
 
             modelBuilder.Entity("SakeFigureShop.Domains.Media", b =>
@@ -314,7 +314,7 @@ namespace SakeFigureShop.Data.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("Media");
+                    b.ToTable("Media", (string)null);
                 });
 
             modelBuilder.Entity("SakeFigureShop.Domains.Product", b =>
@@ -355,7 +355,7 @@ namespace SakeFigureShop.Data.Migrations
 
                     b.HasIndex("FilmId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("SakeFigureShop.Domains.User", b =>
