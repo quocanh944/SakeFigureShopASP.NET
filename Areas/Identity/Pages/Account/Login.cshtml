@@ -8,18 +8,22 @@
     <h2>Đăng nhập</h2>
     <hr />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <span asp-validation-for="Input.Email" class="text-danger"></span>
-    <div class="form-outline mb-4">
-        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" id="emailInput"/>
-        <label asp-for="Input.Email" class="form-label" for="emailInput"></label>
+    <input asp-for="Input.LocalStorage" hidden />
+    <div class="mb-4">
+        <div class="form-outline">
+            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" id="emailInput"/>
+            <label asp-for="Input.Email" class="form-label" for="emailInput"></label>
+        </div>
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
     </div>
-
-    <span asp-validation-for="Input.Password" class="text-danger"></span>
-    <div class="form-outline mb-4">
-        <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" id="pwInput"/>
-        <label asp-for="Input.Password" class="form-label" for="pwInput"></label>
+    
+    <div class="mb-4">
+        <div class="form-outline">
+            <input asp-for="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" id="pwInput"/>
+            <label asp-for="Input.Password" class="form-label" for="pwInput"></label>
+        </div>
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
-
     <div>
         <div class="checkbox">
             <label asp-for="Input.RememberMe" class="form-label">
@@ -40,6 +44,26 @@
         </p>
     </div>
 </form>
+<script>
+    $(() => {
+        $("#login-submit").click((e) => {
+            let cart = JSON.parse(localStorage.getItem("cartItem") || "{}")
+            let items = Object.keys(cart);
+            e.preventDefault();
+            if (Object.keys(cart).length) {
+                let data = []
+                for (let i = 0; i < items.length; i++) {
+                    let item = cart[items[i]]
+                    item.ProductId = Number.parseInt(items[i])
+                    data.push(item)
+                }
+                $("#Input_LocalStorage").val(JSON.stringify(data))
+            }
+            $("#account").submit()
+            localStorage.clear()
+        })
+    })
+</script>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

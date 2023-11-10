@@ -20,6 +20,8 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
     {
         private readonly UserManager<User> _userManager;
 
+        public string ReturnUrl { get; set; }
+
         public ConfirmEmailModel(UserManager<User> userManager)
         {
             _userManager = userManager;
@@ -31,12 +33,16 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
         /// </summary>
         [TempData]
         public string StatusMessage { get; set; }
-        public async Task<IActionResult> OnGetAsync(string userId, string code)
+        public async Task<IActionResult> OnGetAsync(string userId, string code, string returnUrl = null)
         {
             if (userId == null || code == null)
             {
                 return RedirectToPage("/Index");
             }
+
+            returnUrl ??= Url.Content("~/");
+
+            ReturnUrl = returnUrl;
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)

@@ -46,7 +46,7 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Bạn phải nhập email.")]
             [EmailAddress]
             public string Email { get; set; }
         }
@@ -74,8 +74,8 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
 
                 await _emailSender.SendEmailAsync(
                     Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    "Tạo lại mật khẩu.",
+                    $"Bấm vào đường link sau để tại lại mật khẩu <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Tại đây</a>.");
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

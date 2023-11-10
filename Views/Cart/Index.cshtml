@@ -1,0 +1,256 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using Microsoft.AspNetCore.Identity
+@using SakeFigureShop.Domains
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@model SakeFigureShop.Models.Cart.CartViewModel
+@{
+    ViewData["Title"] = "Giỏ hàng";
+}
+
+<div class="container py-5">
+    <div class="row d-flex justify-content-center my-4">
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h5 class="mb-0">Giỏ hàng</h5>
+                </div>
+                <div class="card-body" id="cart-body">
+                    @{
+                        double totalAmount = 0;
+                    }
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        foreach (var item in Model.cartItems)
+                        {
+                            <div class="row">
+                                <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                                    <!-- Image -->
+                                    <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                                        <img src="@item.Product.ThumbnailImageUrl"
+                                             class="w-100" />
+                                        <a href="/Home/Detail/@item.Product.Id">
+                                            <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                                        </a>
+                                    </div>
+                                    <!-- Image -->
+                                </div>
+
+                                <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                    <!-- Data -->
+                                    <p><strong>@item.Product.Name</strong></p>
+                                    <p>Hãng: @item.Product.Brand.Name</p>
+                                    <p>Anime: @item.Product.Film.Name</p>
+                                    <form asp-controller="Cart" asp-action="RemoveItem">
+                                        <input hidden value="@item.Product.Id" name="productId" />
+                                        <button type="submit" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
+                                                title="Remove item">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </form>
+                                    <!-- Data -->
+                                </div>
+
+                                <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                                    <!-- Quantity -->
+                                    <div class="d-flex mb-4" style="max-width: 300px">
+                                        <button class="btn btn-primary px-3 me-2"
+                                                onclick="stepDown(this.parentNode.querySelector('input[type=number]'))">
+                                            <i class="fas fa-minus"></i>
+                                        </button>
+
+                                        <div class="form-group">
+                                            @{
+                                                var id = "form" + item.Product.Id.ToString();
+                                            }
+                                            <input onchange="changeQuantity(this)" id="@id" min="1" max="@item.Product.Quantity" name="quantity" value="@item.quantity" type="number" class="form-control" />
+                                        </div>
+                                        <button class="btn btn-primary px-3 ms-2"
+                                                onclick="stepUp(this.parentNode.querySelector('input[type=number]'))">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                    <!-- Quantity -->
+                                    <!-- Price -->
+                                    <p class="text-start text-md-center">
+                                        @{
+                                            var total = (item.Product.Price * item.quantity).ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"));
+                                            totalAmount += item.Product.Price * item.quantity;
+                                        }
+                                        <strong>@total</strong>
+                                    </p>
+                                    <!-- Price -->
+                                </div>
+                            </div>
+
+                            <hr class="my-4" />
+                        }
+                    }
+                </div>
+            </div>
+            <div class="card mb-4">
+                <div class="card-body">
+                    <p class="text-danger"><strong>Chỉ chấp nhận thanh toán bằng tiền mặt</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header py-3">
+                    <h5 class="mb-0">Tổng quan</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                            <div>
+                                <strong>Tổng tiền</strong>
+                                <strong>
+                                    <p class="mb-0">(Đã bao gồm VAT & phí ship)</p>
+                                </strong>
+                            </div>
+                            <span><strong id="total-amount">@totalAmount.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</strong></span>
+                        </li>
+                    </ul>
+                    <a 
+                        class="btn btn-primary btn-lg btn-block"
+                        asp-area="" asp-controller="Cart" asp-action="Checkout"
+                    >
+                        Đặt hàng
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (!SignInManager.IsSignedIn(User))
+{
+    <script>
+        function changeQuantity(e) {
+            let id = Number.parseInt(e.id.replace("form", ""))
+            const cart = JSON.parse(localStorage.getItem("cartItem") || "{}")
+            cart[id].quantity = Number.parseInt(e.value)
+            localStorage.setItem("cartItem", JSON.stringify(cart))
+            updateCart()
+        }
+        function stepDown(e) {
+            e.stepDown()
+            changeQuantity(e)
+        }
+        function stepUp(e) {
+            e.stepUp()
+            changeQuantity(e)
+        }
+        function removeItem(key) {
+            const cart = JSON.parse(localStorage.getItem("cartItem") || "{}")
+            delete cart[key]
+            localStorage.setItem("cartItem", JSON.stringify(cart))
+            updateCart()
+        }
+        function updateCart() {
+            const cart = JSON.parse(localStorage.getItem("cartItem") || "{}")
+            const items = Object.keys(cart)
+            $("#cart-badge").html(items.length)
+            let html = "";
+            let total = 0;
+            for (let i = 0; i < items.length; i++) {
+                let item = cart[items[i]]
+                total += item.price * item.quantity;
+                html += `<div class="row">
+                            <div class="col-lg-3 col-md-12 mb-4 mb-lg-0">
+                                <!-- Image -->
+                                <div class="bg-image hover-overlay hover-zoom ripple rounded" data-mdb-ripple-color="light">
+                                    <img src="${item.thumbnailUrl}"
+                                            class="w-100" />
+                                    <a href="/Home/Detail/${items[i]}">
+                                        <div class="mask" style="background-color: rgba(251, 251, 251, 0.2)"></div>
+                                    </a>
+                                </div>
+                                <!-- Image -->
+                            </div>
+
+                            <div class="col-lg-5 col-md-6 mb-4 mb-lg-0">
+                                <!-- Data -->
+                                <p><strong>${item.name}</strong></p>
+                                <p>Hãng: ${item.brand} </p>
+                                <p>Anime: ${item.film}</p>
+
+                                <button type="button" onclick="removeItem(${items[i]})" class="btn btn-primary btn-sm me-1 mb-2" data-mdb-toggle="tooltip"
+                                        title="Xóa khỏi giỏ hàng">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <!-- Data -->
+                            </div>
+
+                            <div class="col-lg-4 col-md-6 mb-4 mb-lg-0">
+                                <!-- Quantity -->
+                                <div class="d-flex mb-4" style="max-width: 300px">
+                                    <button class="btn btn-primary px-3 me-2"
+                                                onclick="stepDown(this.parentNode.querySelector('input[type=number]'))">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+
+                                    <div class="form-group">
+                                        <input onchange="changeQuantity(this)" id="form${items[i]}" min="1" max="${item.maxQuantity}" name="quantity" value="${item.quantity}" type="number" class="form-control" />
+                                    </div>
+
+                                    <button class="btn btn-primary px-3 ms-2"
+                                            onclick="stepUp(this.parentNode.querySelector('input[type=number]'))">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <!-- Quantity -->
+                                <!-- Price -->
+                                <p class="text-start text-md-center">
+                                   <strong>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(item.price * item.quantity)}</strong>
+                                </p>
+                                <!-- Price -->
+                            </div>
+                            </div><hr class="my-4" />`
+            }
+            $("#cart-body").html("");
+            $("#cart-body").html(html);
+            $("#total-amount").html(new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(total));
+        }
+        $(() => {
+            updateCart()
+        })
+    </script>
+} else
+{
+    <script>
+        async function postUpdateSingleCartItem(url = "", data = {}) {
+            // Default options are marked with *
+            const response = await fetch(url, {
+                method: "POST", // *GET, POST, PUT, DELETE, etc.
+                mode: "cors", // no-cors, *cors, same-origin
+                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                credentials: "same-origin", // include, *same-origin, omit
+                headers: {
+                    "Content-Type": "application/json",
+                    // 'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                redirect: "follow", // manual, *follow, error
+                referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                body: JSON.stringify(data), // body data type must match "Content-Type" header
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+        function updateCart(e) {
+            const quantity = Number.parseInt(e.value)
+            const productId = Number.parseInt(e.id.replace("form", ""))
+            postUpdateSingleCartItem("/Cart/UpdateSingleCartItem", { ProductId: productId, quantity }).then((data) => {
+                window.location.reload()
+            })
+        }
+        function stepDown(e) {
+            e.stepDown()
+            updateCart(e)
+        }
+        function stepUp(e) {
+            e.stepUp()
+            updateCart(e)
+        }
+    </script>
+}

@@ -13,7 +13,6 @@ namespace SakeFigureShop.Data
         public DbSet<Media> Media { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
 
-
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {

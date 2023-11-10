@@ -7,19 +7,25 @@
     <h2>Tạo Tài Khoản</h2>
     <hr />
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="form-outline mb-4">
-        <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" id="formEmail"/>
-        <label asp-for="Input.Email" class="form-label" for="formEmail"></label>
+    <div class="mb-4">
+        <div class="form-outline ">
+            <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" id="formEmail"/>
+            <label asp-for="Input.Email" class="form-label" for="formEmail"></label>
+        </div>
         <span asp-validation-for="Input.Email" class="text-danger"></span>
     </div>
-    <div class="form-outline mb-4">
-        <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" id="formPW" />
-        <label asp-for="Input.Password" class="form-label" for="formPW">Mật Khẩu</label>
+    <div class="mb-4">
+        <div class="form-outline mb-4">
+            <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" id="formPW" />
+            <label asp-for="Input.Password" class="form-label" for="formPW">Mật Khẩu</label>
+        </div>
         <span asp-validation-for="Input.Password" class="text-danger"></span>
     </div>
-    <div class="form-outline mb-4">
-        <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" id="formCPW" />
-        <label asp-for="Input.ConfirmPassword" class="form-label" for="formCPW">Nhập lại mật khẩu</label>
+    <div class="mb-4">
+        <div class="form-outline mb-4">
+            <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" id="formCPW" />
+            <label asp-for="Input.ConfirmPassword" class="form-label" for="formCPW">Nhập lại mật khẩu</label>
+        </div>
         <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
     </div>
     <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Đăng ký</button>

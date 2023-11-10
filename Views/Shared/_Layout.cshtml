@@ -1,9 +1,16 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@using SakeFigureShop.Domains
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@inject SakeFigureShop.Data.ApplicationDbContext context
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SakeFigureShop</title>
+    <link rel="icon" href="~/images/logo.jpg" />
     <link rel="stylesheet" href="~/lib/mdb/css/mdb.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SakeFigureShop.styles.css" asp-append-version="true" />
@@ -47,19 +54,33 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Trang chủ</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Chính sách</a>
-                        </li>
+                        @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Manager" asp-action="Index">Quản lý</a>
+                            </li>
+                        }
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ShopAll">Mua sắm</a>
                         </li>
                     </ul>
                     <div class="navbar-nav d-flex gap-2">
-                        <form class="d-flex">
+                        @{
+                            var amount = "";
+                        }
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            var user = context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+                            amount = context.CartItems.Where(c => c.UserId == user.Id).ToList().Count().ToString();
+                        }
+                        else {
+                            amount = "0";
+                        }
+                        <form class="d-flex" method="get" asp-action="Index" asp-controller="Cart">
                             <button class="btn btn-outline-dark" type="submit">
                                 <i class="fa-solid fa-cart-shopping"></i>
                                 Giỏ hàng
-                                <span class="badge bg-dark text-white ms-1 rounded-pill">0</span>
+                                <span class="badge bg-dark text-white ms-1 rounded-pill" id="cart-badge">@amount</span>
                             </button>
                         </form>
                         <partial name="_LoginPartial" />
@@ -112,6 +133,16 @@
             </div>
         </div>
     </footer>
+    <partial name="_ToastPartial" />
+    @if (!SignInManager.IsSignedIn(User))
+    {
+        <script>
+            $(() => {
+                let cart = JSON.parse(localStorage.getItem("cartItem") || "{}")
+                $("#cart-badge").html(Object.keys(cart).length)
+            })
+        </script>
+    }
     <script src="~/lib/mdb/js/mdb.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>

@@ -13,8 +13,10 @@ namespace SakeFigureShop.Data
                 var context = new ApplicationDbContext(serviceProvider.GetRequiredService<DbContextOptions<ApplicationDbContext>>())
             ) {
                 var adminUid = await EnsureUser(serviceProvider, username, pw);
+                var userUid = await EnsureUser(serviceProvider, "user@example.com", "User@1234");
 
                 await EnsureRole(serviceProvider, adminUid, "Admin");
+                await EnsureRole(serviceProvider, userUid, "User");
 
                 var isBrandsAdded = await EnsureBrands(context);
                 var isFlimsAdded = await EnsureFilms(context);

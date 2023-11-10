@@ -8,4 +8,10 @@ namespace SakeFigureShop.Models.Home
         public IEnumerable<Film> AllFilms { get; set; } = new List<Film>(); 
         public IEnumerable<Product> AllProducts { get; set; } = new List<Product>();
     }
+
+    public class DetailViewModel
+    {
+        public IEnumerable<Product> RelatedProducts { get; set; } = new List<Product>();
+        public Product Product { get; set; }
+    }
 }

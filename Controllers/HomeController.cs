@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NuGet.Versioning;
 using SakeFigureShop.Data;
 using SakeFigureShop.Models;
 using SakeFigureShop.Models.Home;
+using SQLitePCL;
 using System.Diagnostics;
 using System.Web;
 
@@ -129,10 +131,28 @@ namespace SakeFigureShop.Controllers
             return View(vm);
         }
 
-        [Authorize(Roles = "Admin")]
-        public IActionResult Privacy()
+        [AllowAnonymous]
+        [Route("Home/Detail/{id}")]
+        public IActionResult Detail(long id)
         {
-            return View();
+            var vm = new DetailViewModel();
+            var product = _context.Products
+                .Include(p => p.Medias)
+                .Include(p => p.Brand)
+                .Include(p => p.Film)
+                .FirstOrDefault(p => p.Id == id);
+            if (product == null)
+            {
+                return NotFound("Không tìm thấy sản phẩm");
+            }
+            var relatedProduct = _context.Products
+                .Include(p => p.Brand)
+                .Include(p => p.Film)
+                .Where(p => p.Id != id)
+                .Where(p => p.BrandId == product.BrandId || p.FilmId == product.FilmId).ToList();
+            vm.Product = product;
+            vm.RelatedProducts = relatedProduct;
+            return View(vm);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

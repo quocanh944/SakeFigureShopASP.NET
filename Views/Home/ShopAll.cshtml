@@ -207,9 +207,17 @@
                                     @{
                                         var name = prod.Name + " Hãng " + prod.Brand.Name;
                                     }
-                                    <p class="card-text">@name</p>
+                                    <p class="card-text">
+                                        @name
+                                    </p>
                                     <div class="card-footer d-flex align-items-end pt-3 px-0 pb-0 mt-auto">
-                                        <a href="#!" class="btn btn-primary shadow-0 me-1">Thêm vào giỏ hàng</a>
+                                        <a asp-area=""
+                                           asp-controller="Home"
+                                           asp-action="Detail"
+                                           asp-route-id="@prod.Id"
+                                           class="btn btn-primary shadow-0 me-1">
+                                            Xem chi tiết
+                                        </a>
                                     </div>
                                 </div>
                             </div>

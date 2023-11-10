@@ -10,8 +10,8 @@
         <a  class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Xin chào @User.Identity?.Name!</a>
     </li>
     <li class="nav-item">
-        <form  class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-            <button  type="submit" class="nav-link btn btn-link text-dark">Đăng xuất</button>
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+            <button id="logout-btn" type="submit" class="nav-link btn btn-link text-dark">Đăng xuất</button>
         </form>
     </li>
 }
@@ -25,3 +25,10 @@ else
     </li>
 }
 </ul>
+<script>
+    $(() => {
+        $("#logout-btn").click(e => {
+            localStorage.clear();
+        })
+    })
+</script>

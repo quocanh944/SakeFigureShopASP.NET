@@ -46,7 +46,7 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Required]
+            [Required(ErrorMessage = "Vui lòng nhập Email.")]
             [EmailAddress]
             public string Email { get; set; }
         }
@@ -65,7 +65,7 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
             var user = await _userManager.FindByEmailAsync(Input.Email);
             if (user == null)
             {
-                ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+                ModelState.AddModelError(string.Empty, "Email đã được gửi hãy kiểm tra lại hộp thư hoặc trong thư rác spam.");
                 return Page();
             }
 
@@ -79,10 +79,10 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
                 protocol: Request.Scheme);
             await _emailSender.SendEmailAsync(
                 Input.Email,
-                "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                "Xác nhận email.",
+                $"Hãy click vào link sau để xác nhận account của bạn. <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>Tại đây</a>.");
 
-            ModelState.AddModelError(string.Empty, "Verification email sent. Please check your email.");
+            ModelState.AddModelError(string.Empty, "Email đã được gửi hãy kiểm tra lại hộp thư hoặc trong thư rác spam.");
             return Page();
         }
     }

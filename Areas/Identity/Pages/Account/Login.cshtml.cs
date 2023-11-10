@@ -15,6 +15,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using SakeFigureShop.Domains;
+using System.Text.Json;
+using SakeFigureShop.Data;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 namespace SakeFigureShop.Areas.Identity.Pages.Account
 {
@@ -22,12 +26,17 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
     public class LoginModel : PageModel
     {
         private readonly SignInManager<User> _signInManager;
+        private readonly ApplicationDbContext _dbContext;
         private readonly ILogger<LoginModel> _logger;
 
-        public LoginModel(SignInManager<User> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(
+            SignInManager<User> signInManager,
+            ApplicationDbContext dbContext,
+            ILogger<LoginModel> logger)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _dbContext = dbContext;
         }
 
         /// <summary>
@@ -67,7 +76,7 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Bạn chưa nhập Email.")]
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "Email không hợp lệ.")]
             public string Email { get; set; }
 
             /// <summary>
@@ -84,6 +93,8 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
             /// </summary>
             [Display(Name = "Ghi nhớ tôi?")]
             public bool RememberMe { get; set; }
+
+            public string LocalStorage { get; set; }
         }
 
         public async Task OnGetAsync(string returnUrl = null)
@@ -113,9 +124,38 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
-                var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
+               var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    if (Input.LocalStorage != null)
+                    {
+                        var user = _dbContext.Users.Where(u => u.Email == Input.Email).FirstOrDefault();
+
+                        var cartItems = JsonSerializer.Deserialize<List<CartItem>>(Input.LocalStorage);
+                        foreach (var cartItem in cartItems)
+                        {
+                            var userCartItem = _dbContext.CartItems.Where(c => c.UserId == user.Id)
+                            .Where(c => c.ProductId == cartItem.ProductId)
+                            .FirstOrDefault();
+                            var prod = _dbContext.Products.Where(p => p.Id == cartItem.ProductId).FirstOrDefault();
+                            if (prod != null) { 
+                                if (userCartItem == null)
+                                {
+                                    var newCartItem = new CartItem();
+                                    newCartItem.ProductId = cartItem.ProductId;
+                                    newCartItem.UserId = user.Id;
+                                    newCartItem.quantity = cartItem.quantity > prod.Quantity ? prod.Quantity : cartItem.quantity;
+                                    _dbContext.CartItems.Add(newCartItem);
+                                }
+                                else
+                                {
+                                    userCartItem.quantity = cartItem.quantity > prod.Quantity ? prod.Quantity : cartItem.quantity;
+                                    _dbContext.Update(userCartItem);
+                                }
+                            }
+                        }
+                        await _dbContext.SaveChangesAsync();
+                    }
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
