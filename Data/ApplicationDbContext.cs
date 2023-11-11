@@ -12,6 +12,8 @@ namespace SakeFigureShop.Data
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Media> Media { get; set; }
         public DbSet<CartItem> CartItems { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -43,10 +45,27 @@ namespace SakeFigureShop.Data
             builder.Entity<CartItem>()
                 .HasOne(e => e.Product);
 
-            builder
-                .Entity<Media>()
+            builder.Entity<User>()
+                .HasMany(e => e.Orders)
+                .WithOne(e => e.User)
+                .HasForeignKey(e => e.UserId)
+                .IsRequired();
+
+            builder.Entity<Order>()
+                .HasMany(e => e.OrderDetails)
+                .WithOne(e => e.Order)
+                .HasForeignKey(e => e.OrderId)
+                .IsRequired();
+            builder.Entity<OrderDetail>()
+                .HasOne(e => e.Product);
+
+            builder.Entity<Media>()
                 .Property(e => e.MediaType)
                 .HasConversion(v => v.ToString(), v => (MediaType)Enum.Parse(typeof(MediaType), v));
+
+            builder.Entity<Order>()
+                .Property(e => e.status)
+                .HasConversion(v => v.ToString(), v => (StatusType)Enum.Parse(typeof(StatusType), v));
         }
     }
 }

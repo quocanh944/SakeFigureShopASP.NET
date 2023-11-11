@@ -1,5 +1,162 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using Microsoft.AspNetCore.Identity
+@using SakeFigureShop.Domains
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
+@model SakeFigureShop.Models.Cart.CheckoutViewModel
+
 @{
+    ViewData["Title"] = "Đặt đơn hàng";
 }
+
+<main class="my-5">
+    <div class="container">
+        <!-- Heading -->
+        <h2 class="mb-5 text-center">Đặt đơn hàng</h2>
+        <!--Grid row-->
+        <div class="row">
+            <!--Grid column-->
+            <div class="col-md-7 mb-4">
+                <!--Card-->
+                <div class="card p-4">
+                    <form asp-controller="Cart" asp-action="MakeCheckout">
+                        <!-- Text input -->
+                        <p class="fw-bold">Địa chỉ</p>
+                        <div class="mb-4">
+                            <label class="form-label" for="order-province">Thành phố / Tỉnh</label>
+                            <select name="province" class="form-select" id="order-province">
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="order-district">Quận / Huyện</label>
+                            <select name="district" class="form-select" id="order-district">
+                            </select>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="order-ward">Phường / Xã</label>
+                            <select name="ward" class="form-select" id="order-ward">
+                            </select>
+                        </div>
+                        <div class="form-outline mb-5">
+                            <input required type="text" name="address" id="order-address" class="form-control" />
+                            <label class="form-label" for="order-address">Địa chỉ</label>
+                        </div>
+
+                        <div class="form-outline mb-4">
+                            <input required type="text" name="fullname" id="order-name" class="form-control" />
+                            <label class="form-label" for="order-name">Họ và tên</label>
+                        </div>
+
+                        <!-- Email input -->
+                        <div class="form-outline mb-4">
+                            <input name="email" type="email" id="order-email" value="@Model.Email" disabled class="form-control" />
+                            <label class="form-label" for="order-email">Email</label>
+                        </div>
+
+                        <!-- Number input -->
+                        <div class="form-outline mb-4">
+                            <input required name="phoneNumber" type="tel" id="order-phone" class="form-control" />
+                            <label class="form-label" for="order-phone">Số điện thoại</label>
+                        </div>
+
+                        <!-- Message input -->
+                        <div class="form-outline mb-4">
+                            <textarea name="information" class="form-control" id="order-infor" rows="4"></textarea>
+                            <label class="form-label" for="order-infor">Thông tin thêm</label>
+                        </div>
+
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary btn-block mb-4">Đặt hàng</button>
+                    </form>
+                </div>
+                <!--/.Card-->
+            </div>
+            <!--Grid column-->
+
+            <!--Grid column-->
+            <div class="col-md-5 mb-4">
+                <!-- Heading -->
+                <h4 class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-muted">Giỏ hàng của bạn</span>
+                    <span class="badge rounded-pill badge-primary">@Model.cartItems.Count()</span>
+                </h4>
+
+                <!-- Cart -->
+                <ul class="list-group mb-3">
+                    @foreach (var item in Model.cartItems)
+                    {
+                        var totalPrice = item.Product.Price * item.quantity;
+                        <li class="list-group-item d-flex justify-content-between">
+                            <div style="max-width: 300px">
+                                <h6 class="my-0">@item.Product.Name</h6>
+                                <small class="text-muted">Số lượng: @item.quantity</small>
+                                <br />
+                                <small class="text-muted">Đơn giá: @item.Product.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</small>
+                            </div>
+                            <span class="text-muted">@totalPrice.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span>
+                        </li>
+                    }
+                </ul>
+                <!-- Cart -->
+            </div>
+            <!--Grid column-->
+        </div>
+        <!--Grid row-->
+    </div>
+</main>
+
+<script>
+    $(() => {
+        fetch('https://provinces.open-api.vn/api/?depth=3', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(response => {
+            let htmlProvince = `<option value="-1">Hãy chọn Thành Phố / Tỉnh</option>`
+            for (let i = 0; i < response.length; i++) {
+                    htmlProvince += `<option data-code="${response[i].code}" value="${response[i].name}">${response[i].name}</option>`
+            }
+            $("#order-province").html(htmlProvince)
+        })
+
+        $("#order-province").on('change', function () {
+            
+            var { code } = $('#order-province').find(":selected").data();
+            fetch(`https://provinces.open-api.vn/api/p/${code}?depth=2`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(response => {
+                    let html = ""
+                    let districts = response.districts
+                    for (let i = 0; i < districts.length; i++) {
+                        html += `<option data-code="${districts[i].code}" value="${districts[i].name}">${districts[i].name}</option>`
+                    }
+                    $("#order-district").html(html)
+                })
+        });
+        $("#order-district").on('change', function () {
+            var { code } = $('#order-district').find(":selected").data();
+            fetch(`https://provinces.open-api.vn/api/d/${code}?depth=2`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+                .then(response => response.json())
+                .then(response => {
+                    let html = ""
+                    let wards = response.wards
+                    for (let i = 0; i < wards.length; i++) {
+                        html += `<option value="${wards[i].name}">${wards[i].name}</option>`
+                    }
+                    $("#order-ward").html(html)
+                })
+        });
+    })
+</script>

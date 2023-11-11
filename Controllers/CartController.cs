@@ -45,6 +45,24 @@ namespace SakeFigureShop.Controllers
             }
             return View();
         }
+        
+        public IActionResult OrderDetail(int id)
+        {
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+
+            var order = _context.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .Where(o => o.UserId == user.Id && o.Id == id).FirstOrDefault();
+
+            if (order == null)
+            {
+                return Redirect("/Identity/Account/Manage/ListOrder");
+            }
+
+            return View(order);
+        }
+
         [HttpPost]
         public async Task<IActionResult> UpdateCart([FromBody] List<CartItem> cartItems)
         {
@@ -202,7 +220,42 @@ namespace SakeFigureShop.Controllers
 
         public IActionResult Checkout()
         {
-            return View();
+            var vm = new CheckoutViewModel();
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            var cartItems = _context.CartItems
+                    .Include(c => c.Product)
+                    .Include(c => c.Product.Brand)
+                    .Include(c => c.Product.Film)
+                    .Where(c => c.UserId == user.Id).ToList();
+            vm.cartItems = cartItems;
+            vm.Email = User.Identity.Name;
+            return View(vm);
+        }
+        [HttpPost]
+        public async Task<IActionResult> MakeCheckout(
+            [FromForm] Order order)
+        {
+            var user = _context.Users.Where(u => u.Email == User.Identity.Name).FirstOrDefault();
+            order.UserId = user.Id;
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            var cartItems = _context.CartItems
+                    .Include(c => c.Product)
+                    .Include(c => c.Product.Brand)
+                    .Include(c => c.Product.Film)
+                    .Where(c => c.UserId == user.Id).ToList();
+            foreach (var item in cartItems)
+            {
+                var orderDetails = new OrderDetail();
+                orderDetails.ProductId = item.ProductId;
+                orderDetails.Quantity = item.quantity;
+                orderDetails.OrderId = order.Id;
+                _context.OrderDetails.Add(orderDetails);
+                _context.CartItems.Remove(item);
+            }
+            await _context.SaveChangesAsync();
+
+            return Redirect("/Identity/Account/Manage/ListOrder");
         }
     }
 }

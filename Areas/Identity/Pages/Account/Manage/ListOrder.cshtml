@@ -1,0 +1,42 @@
+﻿@page
+@model ListOrderModel
+@{
+    ViewData["Title"] = "Tất cả đơn hàng";
+    ViewData["ActivePage"] = ManageNavPages.ListOrders;
+}
+
+<h3>@ViewData["Title"]</h3>
+<div class="row">
+    <div class="col">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Mã đơn hàng</th>
+                    <th scope="col">Họ tên người nhận</th>
+                    <th scope="col">Số lượng món hàng</th>
+                    <th scope="col">Trạng thái</th>
+                    <th scope="col">Ngày đặt hàng</th>
+                    <th scope="col">Tổng tiền</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var o in Model.orders)
+                {
+                    var total = o.OrderDetails.Sum(od => od.Quantity * od.Product.Price);
+                    <tr>
+                        <th scope="row"><a asp-controller="Cart" asp-action="OrderDetail" asp-route-id="@o.Id">@o.Id</a></th>
+                        <td>@o.Fullname</td>
+                        <td>@o.OrderDetails.Count()</td>
+                        <td>@o.status</td>
+                        <td>@o.CreatedDate</td>
+                        <td>@total.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

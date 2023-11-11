@@ -1,6 +1,146 @@
 ﻿@*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
+@model SakeFigureShop.Models.Manager.DashboardViewModel
 @{
+    ViewData["Title"] = "Admin Dashboard";
 }
-Manager
+<div class="container-fluid">
+
+    <div class="d-sm-flex mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    </div>
+
+    <div class="row">
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Tổng đơn hàng
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalOrders</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-receipt fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Tổng doanh thu
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalRevenue.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Đơn hàng chưa xử lý
+                            </div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">@Model.TotalUnconfirmOrders</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Đơn hàng chưa xử lý</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Mã đơn hàng</th>
+                                <th scope="col">Họ tên người nhận</th>
+                                <th scope="col">Số lượng món hàng</th>
+                                <th scope="col">Trạng thái</th>
+                                <th scope="col">Ngày đặt hàng</th>
+                                <th scope="col">Tổng tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in Model.ListUnconfirmOrders)
+                            {
+                                var total = o.OrderDetails.Sum(od => od.Quantity * od.Product.Price);
+                                <tr>
+                                    <th scope="row"><a asp-controller="Manager" asp-action="OrderDetail" asp-route-id="@o.Id">@o.Id</a></th>
+                                    <td>@o.Fullname</td>
+                                    <td>@o.OrderDetails.Count()</td>
+                                    <td>@o.status</td>
+                                    <td>@o.CreatedDate</td>
+                                    <td>@total.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Đơn hàng đã xử lý</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Mã đơn hàng</th>
+                                <th scope="col">Họ tên người nhận</th>
+                                <th scope="col">Số lượng món hàng</th>
+                                <th scope="col">Trạng thái</th>
+                                <th scope="col">Ngày đặt hàng</th>
+                                <th scope="col">Tổng tiền</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in Model.ListConfirmedOrders)
+                            {
+                                var total = o.OrderDetails.Sum(od => od.Quantity * od.Product.Price);
+                                <tr>
+                                    <th scope="row"><a asp-controller="Manager" asp-action="OrderDetail" asp-route-id="@o.Id">@o.Id</a></th>
+                                    <td>@o.Fullname</td>
+                                    <td>@o.OrderDetails.Count()</td>
+                                    <td>@o.status</td>
+                                    <td>@o.CreatedDate</td>
+                                    <td>@total.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

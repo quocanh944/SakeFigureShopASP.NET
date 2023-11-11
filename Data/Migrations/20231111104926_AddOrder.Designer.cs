@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SakeFigureShop.Data;
 
@@ -11,9 +12,10 @@ using SakeFigureShop.Data;
 namespace SakeFigureShop.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231111104926_AddOrder")]
+    partial class AddOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -329,9 +331,6 @@ namespace SakeFigureShop.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("District")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -341,6 +340,7 @@ namespace SakeFigureShop.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Information")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -356,10 +356,6 @@ namespace SakeFigureShop.Data.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Ward")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
