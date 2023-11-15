@@ -170,7 +170,7 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Đăng nhập không thành công. Sai mật khẩu hoặc tài khoản.");
                     return Page();
                 }
             }

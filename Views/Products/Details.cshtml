@@ -1,0 +1,93 @@
+﻿@model SakeFigureShop.Domains.Product
+
+@{
+    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="mt-5 pt-4">
+    <div class="container mt-5">
+        <div>
+            <a asp-action="Edit" asp-route-id="@Model?.Id">Chỉnh sửa</a> |
+            <a asp-action="Index">Quay lại danh sách sản phẩm.</a>
+        </div>
+        <hr/>
+        <!--Grid row-->
+        <div class="row">
+            <!--Grid column-->
+            <div class="col-md-6 mb-4">
+                <div id="carouselExampleInterval" class="carousel slide" data-mdb-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img src="@Model.ThumbnailImageUrl" class="d-block w-100" alt="Wild Landscape" />
+                        </div>
+                        @foreach (var media in Model.Medias)
+                        {
+                            <div class="carousel-item">
+                                <img src="@media.Url" class="d-block w-100" alt="@Model.Name" />
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev text-primary" data-mdb-target="#carouselExampleInterval" type="button" data-mdb-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Về trước</span>
+                    </button>
+                    <button class="carousel-control-next text-primary" data-mdb-target="#carouselExampleInterval" type="button" data-mdb-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Về sau</span>
+                    </button>
+                </div>
+            </div>
+            <!--Grid column-->
+            <!--Grid column-->
+            <div class="col-md-6 mb-4">
+                <!--Content-->
+                <div class="p-4">
+                    <div class="mb-3">
+                        <a href="">
+                            <span class="badge bg-dark me-1">@Model.Brand.Name</span>
+                        </a>
+                        <a href="">
+                            <span class="badge bg-dark me-1">@Model.Film.Name</span>
+                        </a>
+                        <a href="">
+                            <span class="badge bg-danger me-1">Còn @Model.Quantity sản phẩm</span>
+                        </a>
+                        <a href="">
+                            <span class="badge bg-info me-1">New</span>
+                        </a>
+                    </div>
+                    <p class="lead">
+                        <span>@Model.Price.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))</span>
+                    </p>
+                    <!--
+                    <p class="lead">
+                        <span class="me-1">
+                            <del>$200</del>
+                        </span>
+                        <span>$100</span>
+                    </p>
+                    -->
+                    @{
+                        var prodName = Model.Name + " Hãng " + Model.Brand.Name;
+                    }
+                    <strong><p style="font-size: 20px;">@prodName</p></strong>
+                    @{
+                        var desc = Model.Description?.Split("\n");
+                    }
+                    @if (desc != null)
+                    {
+                        @foreach (var line in desc)
+                        {
+                            <p>@line</p>
+                        }
+                    }
+                </div>
+                <!--Content-->
+            </div>
+            <!--Grid column-->
+        </div>
+        <!--Grid row-->
+
+    </div>
+</main>

@@ -76,7 +76,7 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Vui lòng nhập Email.")]
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "Email không đúng định dạng")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -85,7 +85,7 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
             [Required(ErrorMessage = "Vui lòng nhập mật khẩu.")]
-            [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
+            [StringLength(100, ErrorMessage = "Mật khẩu phải có ít nhất 6 kí tự.", MinimumLength = 6)]
             [DataType(DataType.Password)]
             [Display(Name = "Password")]
             public string Password { get; set; }
@@ -147,7 +147,17 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account
                 }
                 foreach (var error in result.Errors)
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    if (error.Code == "DuplicateUserName")
+                    {
+                        ModelState.AddModelError(string.Empty, "Email này đã có người sử dụng.");
+                    }
+                    if (error.Code == "DuplicateEmail")
+                    {
+                    }
+                    if (error.Code != "DuplicateUserName" && error.Code != "DuplicateEmail")
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
 

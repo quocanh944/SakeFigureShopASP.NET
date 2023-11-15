@@ -26,6 +26,9 @@ namespace SakeFigureShop.Controllers
 
             var allOrders = _context.Orders.Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Product);
+            var allProducts = _context.Products;
+            var allBrands = _context.Brands;
+            var allFilms = _context.Films;
 
             var totalOrders = allOrders.Count();
             var listUnconfirmOrders = allOrders.Where(o => o.status == StatusType.NotConfirmed).ToList();
@@ -43,6 +46,9 @@ namespace SakeFigureShop.Controllers
             vm.TotalOrders = totalOrders;
             vm.TotalUnconfirmOrders = totalUnconfirmOrders;
             vm.TotalRevenue = totalRevenue;
+            vm.TotalProducts = allProducts.Count();
+            vm.TotalBrands = allBrands.Count();
+            vm.TotalAnimes = allFilms.Count();
             vm.ListUnconfirmOrders = listUnconfirmOrders;
             vm.ListConfirmedOrders = listConfirmedOrders;
             return View(vm);
@@ -54,6 +60,30 @@ namespace SakeFigureShop.Controllers
             var o = _context.Orders.Include(o => o.OrderDetails)
                 .ThenInclude(od => od.Product).Where(o => o.Id == id).FirstOrDefault();
             return View(o);
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPost]
+        public async Task<IActionResult> ChangeStatusOrder(int orderId, string status)
+        {
+            StatusType statusType;
+            var order = _context.Orders.Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product).Where(o => o.Id == orderId).FirstOrDefault();
+            if (order == null)
+            {
+                return BadRequest("Không tìm thấy đơn hàng.");
+            }
+            if (Enum.TryParse(status, out statusType))
+            {
+                order.status = statusType;
+                _context.Update(order);
+                await _context.SaveChangesAsync();
+                ViewData["Message"] = "Thành công.";
+                return View("OrderDetail", order);
+            } else
+            {
+                return BadRequest();
+            }
         }
     }
 }

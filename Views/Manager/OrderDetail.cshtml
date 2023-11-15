@@ -53,16 +53,18 @@
                     </div>
 
                     <div class="d-flex justify-content-between pt-2">
-                        <p class="text-muted mb-0">Tình trạng đơn hàng: @Model.status</p>
+                        <p class="text-muted mb-0">Tình trạng đơn hàng: <b>@Model.status</b></p>
                         <p class="text-muted mb-0">
                             <span class="fw-bold me-4">Đổi trạng thái</span> 
-                            <form>
+                            <form method="post" asp-controller="Manager" asp-action="ChangeStatusOrder">
+                                <input hidden value="@Model.Id" name="orderId"/>
                                 <select class="form-select-sm" name="status">
                                     <option value="@StatusType.NotConfirmed">@StatusType.NotConfirmed</option>
                                     <option value="@StatusType.Confirmed">@StatusType.Confirmed</option>
                                     <option value="@StatusType.OnDelivery">@StatusType.OnDelivery</option>
                                     <option value="@StatusType.Deliveried">@StatusType.Deliveried</option>
                                 </select>
+                                <button type="submit" class="btn btn-primary">Thay đổi</button>
                             </form>
                         </p>
                     </div>
@@ -81,3 +83,16 @@
         </div>
     </div>
 </div>
+
+@if (ViewData["Message"] != null)
+{
+    <script>
+        $(() => {
+            $("#liveToast").removeClass("hide").addClass("show")
+            $("#toast-content").html('@ViewData["Message"]')
+            setTimeout(() => {
+                $("#close-btn").click()
+            }, 2000)
+        })
+    </script>
+}

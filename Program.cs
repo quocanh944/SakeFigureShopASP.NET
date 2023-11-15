@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using SakeFigureShop.Data;
 using SakeFigureShop.Domains;
 using SakeFigureShop.Services;
+using SakeFigureShop.Services.Interfaces;
 using System.Configuration;
 
 namespace SakeFigureShop
@@ -41,6 +42,7 @@ namespace SakeFigureShop
                     .RequireAuthenticatedUser().Build();
             });
             builder.Services.AddTransient<IEmailSender, MailService>();
+            builder.Services.AddTransient<IStorageService, FirebaseStorageService>();
 
             var app = builder.Build();
 

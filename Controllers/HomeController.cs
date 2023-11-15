@@ -51,14 +51,14 @@ namespace SakeFigureShop.Controllers
                 _context.Products.Include(p => p.Brand).Include(p => p.Film)
                     .OrderBy(p => p.Price)
                     .Where(p => p.FilmId == id)
-                    .Where(p => p.Name.Contains(search))
+                    .Where(p => string.IsNullOrEmpty(search) ? true : p.Name.Contains(search))
                     .Where(p => brands.Count > 0 ? (p.BrandId != null ? brands.Contains((long)p.BrandId) : false) : true)
                     .Where(p => maxPrice != -1 ? p.Price <= maxPrice : true)
                     .Where(p => minPrice != -1 ? p.Price >= minPrice : true) :
                 _context.Products.Include(p => p.Brand).Include(p => p.Film)
                     .OrderByDescending(p => p.Price)
                     .Where(p => p.FilmId == id)
-                    .Where(p => p.Name.Contains(search))
+                    .Where(p => string.IsNullOrEmpty(search) ? true : p.Name.Contains(search))
                     .Where(p => brands.Count > 0 ? (p.BrandId != null ? brands.Contains((long)p.BrandId) : false) : true)
                     .Where(p => maxPrice != -1 ? p.Price <= maxPrice : true)
                     .Where(p => minPrice != -1 ? p.Price >= minPrice : true);
@@ -100,13 +100,13 @@ namespace SakeFigureShop.Controllers
                 sort == "ASC" ? 
                 _context.Products.Include(p => p.Brand).Include(p => p.Film)
                     .OrderBy(p => p.Price)
-                    .Where(p => p.Name.Contains(search))
+                    .Where(p => string.IsNullOrEmpty(search) ? true : p.Name.Contains(search))
                     .Where(p => brands.Count > 0 ? (p.BrandId != null ? brands.Contains((long) p.BrandId) : false) : true)
                     .Where(p => maxPrice != -1 ? p.Price <= maxPrice : true)
                     .Where(p => minPrice != -1 ? p.Price >= minPrice : true) :
                 _context.Products.Include(p => p.Brand).Include(p => p.Film)
                     .OrderByDescending(p => p.Price)
-                    .Where(p => p.Name.Contains(search))
+                    .Where(p => string.IsNullOrEmpty(search) ? true : p.Name.Contains(search))
                     .Where(p => brands.Count > 0 ? (p.BrandId != null ? brands.Contains((long)p.BrandId) : false) : true)
                     .Where(p => maxPrice != -1 ? p.Price <= maxPrice : true)
                     .Where(p => minPrice != -1 ? p.Price >= minPrice : true);

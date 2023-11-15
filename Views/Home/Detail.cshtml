@@ -69,11 +69,14 @@
                     }
                     <strong><p style="font-size: 20px;">@prodName</p></strong>
                     @{
-                        var desc = Model.Product.Description.Split("\n");
+                        var desc = Model.Product.Description?.Split("\n");
                     }
-                    @foreach(var line in desc)
+                    @if(desc != null)
                     {
-                        <p>@line</p>
+                        @foreach(var line in desc)
+                        {
+                            <p>@line</p>
+                        }
                     }
 
                     <form 

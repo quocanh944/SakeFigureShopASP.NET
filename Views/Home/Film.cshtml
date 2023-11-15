@@ -320,6 +320,13 @@
 <!-- sidebar + content -->
 <script>
     $(() => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        if (urlParams.get("search")) {
+            $("#searchInput").val(urlParams.get("search"))
+        }
+
+
         $(".brand-select").change(e => {
             if (e.target.value != "-1") {
                 $("#all").prop("checked", false)
@@ -358,9 +365,7 @@
             if (maxPrice) {
                 urlParams.set("maxPrice", maxPrice)
             }
-            if (searchInput) {
-                urlParams.set("search", searchInput)
-            }
+            urlParams.set("search", searchInput)
 
             urlParams.set("page", 1)
             urlParams.delete("brands")

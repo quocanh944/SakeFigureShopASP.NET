@@ -8,21 +8,21 @@ namespace SakeFigureShop.Domains
         [Key]
         public long Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập tên sản phẩm.")]
         public string Name { get; set; }
-        public string Description { get; set; }
+        public string? Description { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập giá sản phẩm.")]
         public double Price { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập số lượng sản phẩm")]
         public int Quantity { get; set; }
-        public string ThumbnailImageUrl { get; set; }
+        public string? ThumbnailImageUrl { get; set; }
         public long? BrandId { get; set; }
         public Brand? Brand { get; set; }
         public long? FilmId { get; set; }
         public Film? Film { get; set; }
-        public ICollection<Media> Medias { get; set; }
+        public ICollection<Media>? Medias { get; set; } = new List<Media>();
 
         public override bool Equals(Object obj)
         {

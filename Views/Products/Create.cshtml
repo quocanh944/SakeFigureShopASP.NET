@@ -1,0 +1,67 @@
+﻿@model SakeFigureShop.Domains.Product
+
+@{
+    ViewData["Title"] = "Tạo sản phẩm";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Tạo sản phẩm</h1>
+
+<hr />
+<div class="my-4">
+    <a asp-action="Index">Quay lại list sản phẩm</a>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-4">
+                <label asp-for="Name" class="control-label">Tên sản phẩm</label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="Price" class="control-label">Giá sản phẩm</label>
+                <input type="number" asp-for="Price" class="form-control" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="Quantity" class="control-label">Số lượng</label>
+                <input type="number" asp-for="Quantity" class="form-control" />
+                <span asp-validation-for="Quantity" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="BrandId" class="control-label">Hãng</label>
+                <select asp-for="BrandId" class="form-control" asp-items="ViewBag.BrandId"></select>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="FilmId" class="control-label">Anime</label>
+                <select asp-for="FilmId" class="form-control" asp-items="ViewBag.FilmId"></select>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="ThumbnailImageUrl" class="control-label">Ảnh thumbnail</label>
+                <input asp-for="ThumbnailImageUrl" class="form-control" accept="image/*" type="file">
+                <span asp-validation-for="ThumbnailImageUrl" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="Medias" class="control-label">Ảnh chi tiết</label>
+                <input asp-for="Medias" class="form-control" accept="image/*" type="file" multiple>
+                <span asp-validation-for="Medias" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-4">
+                <label asp-for="Description" class="control-label">Mô tả sản phẩm</label>
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <input type="submit" value="Tạo sản phẩm" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

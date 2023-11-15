@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +19,7 @@ namespace SakeFigureShop.Controllers
         {
             _context = context;
         }
-
-        // GET: Films
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             return _context.Films != null ?
@@ -27,33 +27,13 @@ namespace SakeFigureShop.Controllers
                         Problem("Entity set 'ApplicationDbContext.Films'  is null.");
         }
 
-        // GET: Films/Details/5
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null || _context.Films == null)
-            {
-                return NotFound();
-            }
-
-            var film = await _context.Films
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (film == null)
-            {
-                return NotFound();
-            }
-
-            return View(film);
-        }
-
-        // GET: Films/Create
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Films/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name")] Film film)
@@ -67,7 +47,7 @@ namespace SakeFigureShop.Controllers
             return View(film);
         }
 
-        // GET: Films/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long? id)
         {
             if (id == null || _context.Films == null)
@@ -83,9 +63,7 @@ namespace SakeFigureShop.Controllers
             return View(film);
         }
 
-        // POST: Films/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,Name")] Film film)
@@ -118,7 +96,7 @@ namespace SakeFigureShop.Controllers
             return View(film);
         }
 
-        // GET: Films/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long? id)
         {
             if (id == null || _context.Films == null)
@@ -136,7 +114,7 @@ namespace SakeFigureShop.Controllers
             return View(film);
         }
 
-        // POST: Films/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(long id)

@@ -56,11 +56,11 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account.Manage
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
             /// </summary>
-            [Phone]
+            [Phone(ErrorMessage = "Điện thoại không hợp lệ.")]
             [Display(Name = "Phone number")]
             public string PhoneNumber { get; set; }
 
-            [StringLength(250, ErrorMessage = "Name is limited to 250 characters in length.", MinimumLength = 3)]
+            [StringLength(250, ErrorMessage = "Tên dài ít nhất 1 ký tự và nhiều nhất 250 ký tự.", MinimumLength = 1)]
             public string Name { get; set; }
         }
 
@@ -124,7 +124,7 @@ namespace SakeFigureShop.Areas.Identity.Pages.Account.Manage
             }
 
             await _signInManager.RefreshSignInAsync(user);
-            StatusMessage = "Your profile has been updated";
+            StatusMessage = "Thông tin của bạn đã được thay đổi.";
             return RedirectToPage();
         }
     }

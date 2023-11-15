@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SakeFigureShop.Data;
 using SakeFigureShop.Domains;
@@ -29,7 +24,6 @@ namespace SakeFigureShop.Controllers
             _userManager = userManager;
         }
 
-        // GET: Brands
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
@@ -38,35 +32,13 @@ namespace SakeFigureShop.Controllers
                         Problem("Entity set 'ApplicationDbContext.Brands'  is null.");
         }
 
-        // GET: Brands/Details/5
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Details(long? id)
-        {
-            if (id == null || _context.Brands == null)
-            {
-                return NotFound();
-            }
-
-            var brand = await _context.Brands
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (brand == null)
-            {
-                return NotFound();
-            }
-
-            return View(brand);
-        }
-
-        // GET: Brands/Create
         [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Brands/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name")] Brand brand)
@@ -80,7 +52,6 @@ namespace SakeFigureShop.Controllers
             return View(brand);
         }
 
-        // GET: Brands/Edit/5
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(long? id)
         {
@@ -97,9 +68,6 @@ namespace SakeFigureShop.Controllers
             return View(brand);
         }
 
-        // POST: Brands/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -133,7 +101,6 @@ namespace SakeFigureShop.Controllers
             return View(brand);
         }
 
-        // GET: Brands/Delete/5
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(long? id)
         {
@@ -152,7 +119,6 @@ namespace SakeFigureShop.Controllers
             return View(brand);
         }
 
-        // POST: Brands/Delete/5
         [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

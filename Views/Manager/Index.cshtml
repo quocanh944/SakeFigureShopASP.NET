@@ -66,6 +66,68 @@
                 </div>
             </div>
         </div>
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Tổng sản phẩm đang có
+                            </div>
+                            <div class="h5 mb-3 font-weight-bold text-gray-800">@Model.TotalProducts</div>
+                            <div>
+                                <a class="btn btn-primary" asp-action="Index" asp-controller="Products">Xem chi tiết</a>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-box fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Tổng Anime
+                            </div>
+                            <div class="h5 mb-3 font-weight-bold text-gray-800">@Model.TotalAnimes</div>
+                            <div>
+                                <a class="btn btn-primary" asp-action="Index" asp-controller="Films">Xem chi tiết</a>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-film fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Tổng hãng
+                            </div>
+                            <div class="h5 mb-3 font-weight-bold text-gray-800">@Model.TotalBrands</div>
+                            <div>
+                                <a class="btn btn-primary" asp-action="Index" asp-controller="Brands">Xem chi tiết</a>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-copyright fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -75,7 +137,8 @@
                     <h6 class="m-0 font-weight-bold text-primary">Đơn hàng chưa xử lý</h6>
                 </div>
                 <div class="card-body">
-                    <table class="table">
+                    <div class="table-responsive">
+                        <table id="order-not-confirm" class="table">
                         <thead>
                             <tr>
                                 <th scope="col">Mã đơn hàng</th>
@@ -101,6 +164,7 @@
                             }
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -113,7 +177,8 @@
                     <h6 class="m-0 font-weight-bold text-primary">Đơn hàng đã xử lý</h6>
                 </div>
                 <div class="card-body">
-                    <table class="table">
+                    <div class="table-responsive">
+                        <table id="order-confirmed" class="table">
                         <thead>
                             <tr>
                                 <th scope="col">Mã đơn hàng</th>
@@ -139,8 +204,17 @@
                             }
                         </tbody>
                     </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function () {
+        $('#order-confirmed').DataTable();
+        $('#order-not-confirm').DataTable();
+        $('.dataTables_length').addClass('bs-select');
+    });
+</script>
