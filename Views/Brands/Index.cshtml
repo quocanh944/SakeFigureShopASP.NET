@@ -41,3 +41,18 @@
         $('.dataTables_length').addClass('bs-select');
     });
 </script>
+@{
+    var message = ViewData["Message"] != null ? ViewData["Message"]?.ToString() : null;
+}
+@if (message != null)
+{
+    <script>
+        $(() => {
+            $("#liveToast").removeClass("hide").addClass("show")
+            $("#toast-content").html(`@message`)
+            setTimeout(() => {
+                $("#close-btn").click()
+            }, 2000)
+        })
+    </script>
+}

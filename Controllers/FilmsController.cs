@@ -14,6 +14,7 @@ namespace SakeFigureShop.Controllers
     public class FilmsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private static string Message = string.Empty;
 
         public FilmsController(ApplicationDbContext context)
         {
@@ -22,6 +23,12 @@ namespace SakeFigureShop.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
+            ViewData["Message"] = null;
+            if (!string.IsNullOrEmpty(Message))
+            {
+                ViewData["Message"] = Message;
+                Message = string.Empty;
+            }
             return _context.Films != null ?
                         View(await _context.Films.ToListAsync()) :
                         Problem("Entity set 'ApplicationDbContext.Films'  is null.");
@@ -42,6 +49,7 @@ namespace SakeFigureShop.Controllers
             {
                 _context.Add(film);
                 await _context.SaveChangesAsync();
+                Message = "Thêm thành công anime: " + film.Name;
                 return RedirectToAction(nameof(Index));
             }
             return View(film);
@@ -79,6 +87,7 @@ namespace SakeFigureShop.Controllers
                 {
                     _context.Update(film);
                     await _context.SaveChangesAsync();
+                    Message = "Sửa thành công anime: " + film.Name;
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -128,7 +137,7 @@ namespace SakeFigureShop.Controllers
             {
                 _context.Films.Remove(film);
             }
-
+            Message = "Đã xóa thành công anime: " + film?.Name;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

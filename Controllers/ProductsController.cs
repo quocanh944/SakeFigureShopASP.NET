@@ -167,6 +167,7 @@ namespace SakeFigureShop.Controllers
             }
 
             var product = await _context.Products
+                .Include(p => p.Medias)
                 .Include(p => p.Brand)
                 .Include(p => p.Film)
                 .FirstOrDefaultAsync(m => m.Id == id);

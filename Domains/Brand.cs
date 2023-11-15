@@ -7,7 +7,7 @@ namespace SakeFigureShop.Domains
         [Key]
         public long Id { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Vui lòng nhập tên hãng.")]
         public string Name { get; set; }
         public ICollection<Product>? Products { get; set; }
     }

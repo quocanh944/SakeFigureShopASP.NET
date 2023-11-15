@@ -27,8 +27,8 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item.Id">Sửa</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
             </td>
         </tr>
 }
@@ -42,3 +42,18 @@
         $('.dataTables_length').addClass('bs-select');
     });
 </script>
+@{
+    var message = ViewData["Message"] != null ? ViewData["Message"]?.ToString() : null;
+}
+@if (message != null)
+{
+    <script>
+        $(() => {
+            $("#liveToast").removeClass("hide").addClass("show")
+            $("#toast-content").html(`@message`)
+            setTimeout(() => {
+                $("#close-btn").click()
+            }, 2000)
+        })
+    </script>
+}

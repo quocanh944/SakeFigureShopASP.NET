@@ -12,6 +12,7 @@ namespace SakeFigureShop.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IAuthorizationHandler _authService;
         private readonly UserManager<User> _userManager;
+        private static string Message = string.Empty;
 
 
         public BrandsController(
@@ -27,6 +28,12 @@ namespace SakeFigureShop.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
+            ViewData["Message"] = null;
+            if (!string.IsNullOrEmpty(Message))
+            {
+                ViewData["Message"] = Message;
+                Message = string.Empty;
+            }
             return _context.Brands != null ?
                         View(await _context.Brands.ToListAsync()) :
                         Problem("Entity set 'ApplicationDbContext.Brands'  is null.");
@@ -47,6 +54,7 @@ namespace SakeFigureShop.Controllers
             {
                 _context.Add(brand);
                 await _context.SaveChangesAsync();
+                Message = "Thêm thành công hãng: " + brand.Name;
                 return RedirectToAction(nameof(Index));
             }
             return View(brand);
@@ -84,6 +92,7 @@ namespace SakeFigureShop.Controllers
                 {
                     _context.Update(brand);
                     await _context.SaveChangesAsync();
+                    Message = "Sửa thành công hãng: " + brand.Name;
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -134,6 +143,7 @@ namespace SakeFigureShop.Controllers
                 _context.Brands.Remove(brand);
             }
 
+            Message = "Xóa thành công hãng: " + brand?.Name;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
