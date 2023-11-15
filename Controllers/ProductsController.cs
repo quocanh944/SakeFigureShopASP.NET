@@ -14,6 +14,7 @@ namespace SakeFigureShop.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IStorageService _firebaseStorageService;
+        private static string Message = string.Empty;
 
         public ProductsController(ApplicationDbContext context, IStorageService firebaseStorageService)
         {
@@ -24,6 +25,12 @@ namespace SakeFigureShop.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
+            ViewData["Message"] = null;
+            if (!string.IsNullOrEmpty(Message))
+            {
+                ViewData["Message"] = Message;
+                Message = string.Empty;
+            }
             var applicationDbContext = _context.Products.Include(p => p.Brand).Include(p => p.Film);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -193,7 +200,7 @@ namespace SakeFigureShop.Controllers
             {
                 _context.Products.Remove(product);
             }
-            
+            Message = "Đã xóa thành công sản phẩm: " + product?.Name;
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
