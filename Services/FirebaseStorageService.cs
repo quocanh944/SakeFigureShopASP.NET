@@ -29,7 +29,7 @@ namespace SakeFigureShop.Services
             var task = new FirebaseStorage(Bucket, new FirebaseStorageOptions() {
                 AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
                 ThrowOnCancel = true
-            }).Child(DateTime.Now.ToString("MM/dd/yyyy h:mm tt") + "-" + filename).PutAsync(stream, cancellation.Token);
+            }).Child(DateTime.Now.ToString("MM-dd-yyyy h:mm tt") + "-" + filename).PutAsync(stream, cancellation.Token);
 
             return await task;
         }
