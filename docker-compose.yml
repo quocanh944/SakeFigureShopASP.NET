@@ -1,0 +1,15 @@
+﻿version: "3.9"  # optional since v1.27.0
+services:
+  sql:
+    image: "mcr.microsoft.com/mssql/server:2019-latest"
+    container_name: sql_server2019
+    ports: # not actually needed, because the two services are on the same network
+        - "1433:1433" 
+    environment:
+        - ACCEPT_EULA=y
+        - SA_PASSWORD=Quocanh944
+  sake_figure:
+    image: sake_figure
+    container_name: sake_figure_application
+    ports:
+      - "5000:80"
